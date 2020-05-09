@@ -1,0 +1,9 @@
+    <servlet>
+        <servlet-name>Bill</servlet-name>
+        <servlet-class>BillServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>Bill</servlet-name>
+        <url-pattern>/bill</url-pattern>
+    </servlet-mapping>

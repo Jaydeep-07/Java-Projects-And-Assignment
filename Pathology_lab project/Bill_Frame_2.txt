@@ -1,0 +1,284 @@
+/**
+ * @(#)Bill_Frame.java
+ *
+ *
+ * @author 
+ * @version 1.00 2012/12/27
+ */
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import java.io.*;
+import java.sql.*;
+import javax.swing.table.*;
+
+public class Bill_Frame extends JFrame implements ActionListener
+{
+	JLabel lHeading,lBillno,lDate,lRegCode,lPatname,lCharges,lTestno,lTestname;
+	JButton bAdd,bDelete,bClose,bSelect, bRemove,bTotal;
+	JTextField tBillno,tDate,tRegCode,tPatname,tCharges,tTestno,tTestname;
+	List l1,l2;
+    Object[] data = new Object[7];  // Array of Objects of "Object" Class of size 7
+    DefaultTableModel dtm = new DefaultTableModel();
+    JTable jt = new JTable(dtm);
+     int cost=0; 
+    
+	Connection con;
+	Statement st;
+	ResultSet rs;
+    public Bill_Frame() 
+    {	
+    	super("BILL");//,false,true,false,false);
+    	Container cc= getContentPane();
+		cc.setLayout(null);
+		setLocation(100,20);
+		setSize(700,650);
+		
+
+	    Font f = new Font("Arial Rounded MT Bold",Font.BOLD+Font.ITALIC,18);
+    	Font f2 = new Font("Vladimir Script",Font.BOLD+Font.ITALIC,40);  
+    		
+    		
+    	lHeading= new JLabel("PATIENT BILL...");    
+    	lHeading.setFont(f2);
+    	lBillno= new JLabel("BILL NO:");            tBillno= new JTextField(20);
+    	lBillno.setFont(f);	
+    	lDate= new JLabel("DATE:");                 tDate= new JTextField(20);
+    	lDate.setFont(f);	
+    	
+    	lPatname= new JLabel("PATIENT NAME:");      tPatname= new JTextField(20);
+    	lPatname.setFont(f);	
+    	lCharges= new JLabel("CHARGES:");           tCharges= new JTextField(20);
+    	lCharges.setFont(f);
+    	
+    	lTestname= new JLabel("TEST NAME:");        
+    	lTestname.setFont(f);	
+    		
+    	bAdd=new JButton("ADD");	 bDelete=new JButton("DELETE");  bClose=new JButton("CLOSE");
+    	bSelect= new JButton(">>");               bRemove= new JButton("<<");
+    	bTotal= new JButton("=");
+    	
+    	bSelect.setBounds(270,400,50,30);
+    	bRemove.setBounds(270,430,50,30);
+    	bTotal.setBounds(270,460,50,30);
+    	
+    	l1= new List();
+    	l2= new List();
+    	
+    	
+    	lHeading.setBounds(150,10,1000,100);
+    	lBillno.setBounds(20,70,200,100);                        tBillno.setBounds(185,100,150,30);
+    	
+    	lPatname.setBounds(20,210,200,100);                      tPatname.setBounds(185,240,150,30);
+    	
+    	lDate.setBounds(355,70,200,100);                         tDate.setBounds(530,100,150,30);
+    	lCharges.setBounds(355,140,200,100);                      tCharges.setBounds(530,170,150,30);
+    	lTestname.setBounds(355,210,200,100);                     tTestname.setBounds(530,240,150,30);
+    	
+    	bAdd.setBounds(50,525,100,40);                    
+    	bDelete.setBounds(200,525,100,40);
+    	bClose.setBounds(350,525,100,40);
+    	
+    	cc.add(lHeading);	
+    	cc.add(lBillno);					cc.add(tBillno);
+    	cc.add(lDate);						    cc.add(tDate);
+    	
+    	cc.add(lPatname);						cc.add(tPatname);
+    	cc.add(lCharges);						cc.add(tCharges);
+    	
+    	cc.add(lTestname);                     cc.add(tTestname);
+    	cc.add(bAdd);      cc.add(bDelete);     cc.add(bClose); cc.add(l1) ; cc.add(l2);
+    	cc.add(bSelect); cc.add(bRemove); cc.add(bTotal);
+    	
+    	try
+        {
+         	
+          
+          rs= st.executeQuery("Select * From Test_Charges");
+         
+          String TestName= new String("");
+          while(rs.next())
+          { 
+          	TestName= rs.getString(1);
+         	l1.add(TestName);
+          }
+        
+          l1.setBounds(40,400,200,100);
+          cc.add(l1);
+          l2.setBounds(350,400,200,100);
+          cc.add(l2);
+          
+          rs.close();
+          st.close();
+          con.close();
+        }
+        catch(Exception e)
+		{
+			System.out.println("Exception : " + e);
+		}
+    		
+    	bClose.addActionListener(this);
+    	bAdd.addActionListener(this);
+    	bRemove.addActionListener(this);	
+    		
+    	JLabel Lab_img=new JLabel(new ImageIcon("plainFrame.jpg"));
+		Lab_img.setSize(700,700);
+		cc.add(Lab_img);
+  
+		setVisible(true);
+      
+    	
+		try
+		{
+			initialize();
+			rs.last();
+			int str= Integer.parseInt(rs.getString(1))+1;
+		    tBillno.setText(String.valueOf(str));
+			
+			rs.close();
+			st.close();
+			con.close();
+		}
+		catch(Exception e)
+		{
+			System.out.println("Exception : " + e);
+		}
+    }
+    public void initialize()
+	{
+		try
+		{
+			Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+			con = DriverManager.getConnection("jdbc:odbc:PathDSN","","");
+			st = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
+			rs = st.executeQuery("Select * From Bill");
+		}	
+		catch(Exception e)
+		{
+			System.out.println("Exception start : " + e);
+		}
+	}
+	public void actionPerformed(ActionEvent ae)
+	{
+		if(ae.getSource()==bClose)
+		{
+			dispose();
+		}
+		
+		if(ae.getActionCommand().equals(">>"))
+		{
+			l2.add(l1.getSelectedItem());
+		}
+     	if(ae.getActionCommand().equals("<<"))
+		{
+			l2.remove(l2.getSelectedIndex());
+		}
+     	
+     	if(ae.getActionCommand().equals("="))
+		{
+			//int cost=0;
+    		try
+    		{
+    		   initialize();
+    		   rs = st.executeQuery("Select * From Test_Charges");
+    		   for(int i = 0 ; i < l2.getItemCount() ; i++)
+    		   {
+    		   	    rs.beforeFirst();
+    		        String item = l2.getItem(i); 
+    	            while(rs.next()) 
+      		        {
+      		        	
+    			       String str=rs.getString(1);
+    			       
+    			       
+    			       if(item.equals(str))
+    				   {
+    				   	int chrg= Integer.parseInt(rs.getString(2));
+    				   	cost = cost + chrg;
+    			        //continue;
+    			        break;
+    				   }
+    			    }
+    			 
+    		     }
+    		     tCharges.setText(""+cost);
+    		
+    		  rs.close();
+    	      st.close();
+    	      con.close();
+    		}
+    		catch(Exception e)
+		    {
+			   System.out.println("Exception : " + e);
+		    }
+         
+    		
+		}
+		
+	/*	if(ae.getSource()==bAdd)
+		{
+			
+     		/*if(tRefDno.getText().equals("") || tRefDno.getText().equals("") || tRefDqua.getText().equals(""))
+			{
+				String msg = "Please fill all Necessory Data";
+			   	JOptionPane.showMessageDialog(null,msg,"Pathology Lab System",
+				JOptionPane.INFORMATION_MESSAGE);
+					
+			}
+			else if(!(tRefDname.getText().matches("([a-zA-Z.]+\\s*([a-zA-Z.]+\\s*([a-zA-Z]+|[a-zA-Z]+\\s[a-zA-Z]*)))")))
+            {
+            	String msg="Invalid  Name";
+                JOptionPane.showMessageDialog((Component)null,msg,"Pathology Lab System",
+               	JOptionPane.WARNING_MESSAGE);
+               	tRefDname.setText("");
+               	tRefDname.requestFocus();
+          	}	
+          	else if()// Invalid No
+          	{
+          		
+          	}
+		}
+		if(ae.getSource()==bRemove)
+		{
+			if(tBillno.getText().equals(""))
+			{
+				String msg = "There is no Bill to Delete";
+			      	JOptionPane.showMessageDialog(null,msg,"Pathology Lab System",
+			      	JOptionPane.INFORMATION_MESSAGE);		
+			}
+			else
+			{
+				String msg = "Are you sure!";
+				int i = JOptionPane.showConfirmDialog
+					(this,msg,"Pathology Lab System",JOptionPane.YES_NO_OPTION,
+					JOptionPane.WARNING_MESSAGE);			
+				if(i==JOptionPane.YES_OPTION)
+				{
+     		
+     	   	       try
+     		       {
+     			     int Billno = Integer.parseInt(tBillno.getText());
+     			     pst= con.prepareStatement("Delete from RefDoc where RDno=? ");
+     			     pst.setInt(1,RefDno);
+     			     pst.executeUpdate();
+     			
+     			     JOptionPane.showMessageDialog((Component)null,"Records Deleted successfully......","Deleted.",JOptionPane.INFORMATION_MESSAGE);
+     			     pst.close();
+     			     con.close();
+     		       }
+     			   catch(Exception e)
+     	           {
+     			     System.out.println ("Exception in Updating.."+e);
+     		       }
+     	
+     	        }
+			}//else
+     	                                         
+		}*/
+	}
+    public static void main (String[] args) throws Exception 
+    {
+    	new Bill_Frame();
+    }
+    
+}

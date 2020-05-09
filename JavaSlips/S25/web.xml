@@ -1,0 +1,20 @@
+<servlet>
+	<servlet-name>Page1</servlet-name>
+	<servlet-class>Page1Servlet</servlet-class>
+</servlet>
+
+<servlet-mapping>
+	<servlet-name>Page1</servlet-name>
+	<url-pattern>/page1</url-pattern>
+</servlet-mapping>
+
+<servlet>
+	<servlet-name>Bill</servlet-name>
+	<servlet-class>BillServlet</servlet-class>
+</servlet>
+
+<servlet-mapping>
+	<servlet-name>Bill</servlet-name>
+	<url-pattern>/bill</url-pattern>
+</servlet-mapping>
+

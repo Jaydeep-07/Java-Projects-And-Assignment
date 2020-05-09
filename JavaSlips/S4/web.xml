@@ -1,0 +1,9 @@
+    <servlet>
+        <servlet-name>Info</servlet-name>
+        <servlet-class>InformationServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>Info</servlet-name>
+        <url-pattern>/info</url-pattern>
+    </servlet-mapping>
